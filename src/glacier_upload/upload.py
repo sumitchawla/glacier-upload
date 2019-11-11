@@ -33,9 +33,10 @@ fileblock = threading.Lock()
 
 
 def upload(
-    vault_name, file_name, region, arc_desc, part_size, num_threads, upload_id
+    vault_name, file_name, region, arc_desc, part_size, num_threads, upload_id, aws_profile
 ):
-    glacier = boto3.client("glacier", region)
+    session = boto3.Session(profile_name=aws_profile)
+    glacier = session.client('glacier', region)
 
     if not math.log2(part_size).is_integer():
         raise ValueError("part-size must be a power of 2")
@@ -225,6 +226,12 @@ def upload(
 )
 @click.option(
     "-p",
+    "--aws-profile",
+    default="default",
+    help="AWS profile to use for credentials",
+)
+@click.option(
+    "-p",
     "--part-size",
     type=int,
     default=8,
@@ -244,7 +251,7 @@ def upload(
     help="Optional upload id, if provided then will " "resume upload.",
 )
 def upload_command(
-    vault_name, file_name, region, arc_desc, part_size, num_threads, upload_id
+    vault_name, file_name, region, arc_desc, part_size, num_threads, upload_id, aws_profile
 ):
     return upload(
         vault_name,
@@ -254,6 +261,7 @@ def upload_command(
         part_size,
         num_threads,
         upload_id,
+        aws_profile
     )
 
 
