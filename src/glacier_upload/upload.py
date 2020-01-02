@@ -220,7 +220,6 @@ def upload(
 @click.option(
     "-d",
     "--arc-desc",
-    default="",
     metavar="ARCHIVE_DESCRIPTION",
     help="The archive description to help identify archives later",
 )
